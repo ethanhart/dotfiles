@@ -5,20 +5,24 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# don't put duplicate lines in the history. See bash(1) for more options
-# don't overwrite GNU Midnight Commander's setting of `ignorespace'.
-HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-# ... or force ignoredups and ignorespace
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
 HISTCONTROL=ignoreboth
 
 # append to the history file, don't overwrite it
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -36,7 +40,7 @@ esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
-force_color_prompt=yes
+#force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
@@ -78,11 +82,13 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # some more ls aliases
-alias ll='ls -l'
+alias ll='ls -alF'
 alias la='ls -A'
-alias sl='echo "It is \"ls\", not \"sl\". Slow down, bro."; ls'
-alias latest_downloads='ls -t ~/Downloads/ | head '
-alias rm="rm -rv"
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -100,80 +106,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-PATH=$PATH:~/.shadowbin
-export PATH
 
-function _prompt_get_git_branch {
-    $(git symbolic-ref HEAD | cut -d'/' -f3)
-}
-
-function _short_pwd {
-_dir_abbr=$(temp=$(echo "${PWD/$HOME/~}" |sed -r 's/(\/.)[^/]*/\1/g'); echo ${temp:0:$(( ${#temp} - 1 ))})
-   _ps1="$(basename "${PWD/$HOME/~}")"
-   if [ ${#_ps1} -gt 25 ]; then
-       _ps1="${_ps1:0:7}...${_ps1: -7}"
-   fi
-   echo -n "$_dir_abbr$_ps1"
-}
-
-function _colored_short_dir {
-#    if [ \$? = 0 ]; then
-#        echo -n "\[\e[33m\]$(_short_pwd)\[\e[0m\]";
-#    else
-#        echo -n "\[\e[31m\]$(_short_pwd)\[\e[0m\]";
-#    fi
-    if [ \$? = 0 ]; then echo \[\e[33m\]$(_short_pwd)\[\e[0m\]; else echo \[\e[31m\]$(_short_pwd)\[\e[0m\]; fi
-}
-
-function _prompt_old {
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] \$ '
-    #PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
-    export PS1
-}
-
-function _prompt_cool {
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:`if [ \$? = 0 ]; then echo \[\e[33m\]$(_short_pwd)\[\e[0m\]; else echo \[\e[31m\]$(_short_pwd)\[\e[0m\]; fi` $ '
-    export PS1
-}
-
-function _prompt_tuna {
-    PS1='`if [ \$? = 0 ]; then echo \u@\h\[\e[33m\] $(_short_pwd)\[\e[0m\]; else echo \u@\h\[\e[31m\] $(_short_pwd)\[\e[0m\]; fi`> '
-    export PS1
-}
-
-function _prompt_tunadir {
-    PS1='`if [ \$? = 0 ]; then echo \[\e[33m\]$(_short_pwd)\[\e[0m\]; else echo \[\e[31m\]$(_short_pwd)\[\e[0m\]; fi`> '
-    export PS1
-}
-
-function _prompt_presentation {
-    PS1='$ '
-    export PS1
-}
-
-function _prompt_block {
-    PS1='\[\e[40m\]\[\e[1;37m\] \u \[\e[47m\]\[\e[1;30m\] \w \[\e[0m\]\[\e[1;37m\]\[\e[42m\] > \[\e[0m\] '
-    export PS1
-}
-
-function _prompt_block_short {
-    PS1='\[\e[40m\]\[\e[1;37m\] \u \[\e[47m\]\[\e[1;30m\] $(_short_pwd) \[\e[0m\]\[\e[1;37m\]\[\e[42m\] > \[\e[0m\] '
-    export PS1
-}
-
-EDITOR=vim
-set -o vi
-
-alias upgrade-everything="sudo apt-get update && sudo apt-get dist-upgrade -y --force-yes && notify-send 'Upgrade Complete' 'System is now up-to-date'"
-
-#python ~/.shadowbin/untiltest.py
-
-#_prompt_old
-#_prompt_cool
-#_prompt_tuna
-_prompt_tunadir
-#_prompt_block
-#_prompt_block2
-#_prompt_presentation
-
-source ~/.local/bin/bashmarks.sh
+#export PATH=/usr/lib/adt/sdk/platform-tools/:/usr/lib/adt/sdk/tools/:$PATH
+export PATH=$PATH:/opt/sbt/bin:/opt/eclipse/:/usr/lib/adt/sdk/platform-tools/:/usr/lib/adt/sdk/tools/:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
