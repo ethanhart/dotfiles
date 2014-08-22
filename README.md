@@ -1,3 +1,5 @@
+Original credit goes to Kunal Sarkhel (https://github.com/techwizrd/dotfiles).
+
 These are the dotfiles and configurations I use on my system.
 
 The .bashrc has a number of custom bash prompts.
