@@ -16,6 +16,9 @@ shopt -s histappend
 HISTSIZE=1000
 HISTFILESIZE=2000
 
+# Ensure that history for all bash terminals goes to history
+export PROMPT_COMMAND='history -a'
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -108,4 +111,6 @@ fi
 
 
 #export PATH=/usr/lib/adt/sdk/platform-tools/:/usr/lib/adt/sdk/tools/:$PATH
-export PATH=$PATH:/opt/sbt/bin:/opt/eclipse/:/usr/lib/adt/sdk/platform-tools/:/usr/lib/adt/sdk/tools/:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+export PATH=$PATH:/opt/sbt/bin:/opt/eclipse/:/usr/lib/adt/sdk/platform-tools/:/usr/lib/adt/sdk/tools/:/usr/lib/lightdm/lightdm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/ejhart/repo/MosesBinaryRelease/Ubuntu12.04/lib/moses-decoder/bin/
+
+for name in $HOME/repo/MosesBinaryRelease/Ubuntu12.04/lib/*/lib; do export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$name"; done
